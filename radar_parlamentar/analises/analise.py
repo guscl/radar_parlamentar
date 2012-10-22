@@ -354,7 +354,8 @@ class Analise:
 class JsonAnaliseGenerator:
 
     def get_json(self, casa_legislativa):
-        """Retorna JSON tipo {periodo:{nomePartido:{numPartido:1, tamanhoPartido:1, x:1, y:1}}"""
+        #TODO Mudar para retornar o json descrito nesse comentário abaixo (novo)
+        """Retorna JSON tipo [{"nome":"<nomePartido>","tamanhoPartido":<tamanho>,"numero":<numero>,"cor":"<cor>","x":[[<periodo>,<valor>],[<periodo>,<valor>]],"y":[[<periodo>,<valor>],[<periodo>,<valor>]]},...]"""
     
         periodos = self._faz_analises(casa_legislativa)
     
@@ -362,12 +363,12 @@ class JsonAnaliseGenerator:
         analise._inicializa_tamanhos_partidos()
     
         i = 0
-        json = '{'
+        json = '['
         for pa in periodos:
             json += '%s:%s ' % (pa.periodo, self._json_ano(pa.posicoes, analise))
             i += 1
         json = json.rstrip(', ')
-        json += '}'
+        json += ']'
     
         return json
     
@@ -385,6 +386,20 @@ class JsonAnaliseGenerator:
         json += '}, '
         return json
     
+    def _json_partido(self, partido):
+        json = '{'
+        json += '"nome":"%s","cor":"%s","tamanhoPartido":%s,"numero":%s' % (partido.nome, partido.cor, partido.tamanho, partido.numero)
+        #constrói a lista de posições X, cujos itens da lista são listas no formato: [<periodo>,<valor>]
+        x = []
+        #constrói a lista de posições y, cujos itens da lista são listas no formato: [<periodo>,<valor>]
+        y = []
+        #TODO compor as listas x e y...
+        #for .... 
+
+        json += '"x":%s,"y":%s' % (str(x), str(y))
+        json +='}'
+        return json
+
     def _faz_analises(self, casa):
         """casa -- objeto do tipo CasaLegislativa"""
         
