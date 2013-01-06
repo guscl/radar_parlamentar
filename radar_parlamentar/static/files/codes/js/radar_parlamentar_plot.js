@@ -1,10 +1,10 @@
 // Various accessors that specify the four dimensions of data to visualize.
-function x(d) { return d.x; }
-function y(d) { return d.y; }
-function tamanhopartido(d) { return d.tamanhoPartido; }
-function cor(d) { return d.corPartido; }
-function nome(d) { return d.nomePartido; }
-function numero(d) { return d.numero; }
+function x(d) { return d.x; } // income (per capta) from original json
+function y(d) { return d.y; } // life expectancy from original json
+function tamanhopartido(d) { return d.tamanhoPartido; } // population from original json
+function cor(d) { return d.corPartido; } // based on region from original json
+function nome(d) { return d.nomePartido; } // name from original json
+function numero(d) { return d.numero; } // new parameter to json
 
 // Chart dimensions.
 var margin = {top: 19.5, right: 100, bottom: 19.5, left: 39.5},
