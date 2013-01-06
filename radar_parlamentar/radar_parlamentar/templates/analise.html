@@ -5,7 +5,15 @@
 {% endblock title %}
 
 {% block extrascripts %}
-    <script style="display: none;" src="/static/files/codes/js/raphael-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.0.1/d3.v3.min.js"></script>
+    <script type="text/javascript">
+        if (typeof jQuery === 'undefined') {
+        var e = document.createElement('script');
+            e.src = '/static/files/codes/js/d3.min.js';
+            e.type='text/javascript';
+        document.getElementsByTagName("head")[0].appendChild(e);
+      }
+    </script>
 {% endblock extrascripts %}
 
 {% block extrahead %}
