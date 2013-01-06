@@ -38,4 +38,4 @@ class PeriodoAnalise(models.Model):
     posicoes = models.ManyToManyField(PosicaoPartido)
 
 
-    
+

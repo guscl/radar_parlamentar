@@ -51,7 +51,7 @@ class CamaraTest(TestCase):
         codigo_florestal_xml = camaraws.obter_proposicao(ID)
         nome = codigo_florestal_xml.find('nomeProposicao').text
         self.assertEquals(nome, NOME)
-        
+
     def test_obter_votacoes(self):
 
         camaraws = camara.Camaraws()
@@ -64,7 +64,7 @@ class CamaraTest(TestCase):
         id_que_nao_existe = 'id_que_nao_existe'
         camaraws = camara.Camaraws()
         caught = False
-        try:        
+        try:
             camaraws.obter_proposicao(id_que_nao_existe)
         except ValueError as e:
             self.assertEquals(e.message, 'Proposição %s não encontrada' % id_que_nao_existe)
@@ -78,7 +78,7 @@ class CamaraTest(TestCase):
         ano = '1876'
         camaraws = camara.Camaraws()
         caught = False
-        try:        
+        try:
             camaraws.obter_votacoes(sigla, num, ano)
         except ValueError as e:
             self.assertEquals(e.message, 'Votações da proposição %s %s/%s não encontrada' % (sigla, num, ano))
@@ -130,8 +130,8 @@ class CamaraTest(TestCase):
         self.assertEquals(voto1.legislatura.partido.nome, 'PSDB')
         self.assertEquals(voto2.legislatura.localidade, 'SP')
 
-        
 
 
-    
+
+
 

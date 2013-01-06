@@ -50,7 +50,7 @@ class Analise:
         self.fim = parse_datetime('%s 0:0:0' % data_fim)
 
         self.votacoes = votacoes
-        if not self.votacoes: 
+        if not self.votacoes:
             self.votacoes = self._inicializa_votacoes(self.casa_legislativa, self.ini, self.fim)
 
         # TODO que acontece se algum partido for ausente neste período?
@@ -66,7 +66,7 @@ class Analise:
 
     def _inicializa_votacoes(self, casa, ini, fim):
         """Pega votações do banco de dados
-    
+
         Argumentos:
             casa -- obejto do tipo CasaLegislativa
             ini, fim -- objetos do tipo datetime
@@ -75,7 +75,7 @@ class Analise:
         """
 
         if ini == None and fim == None:
-            votacoes = models.Votacao.objects.filter(proposicao__casa_legislativa=casa) 
+            votacoes = models.Votacao.objects.filter(proposicao__casa_legislativa=casa)
         if ini == None and fim != None:
             votacoes = models.Votacao.objects.filter(proposicao__casa_legislativa=casa).filter(data__lte=fim)
         if ini != None and fim == None:
@@ -96,13 +96,13 @@ class Analise:
         return self.tamanhos_partidos
 
     def _inicializa_vetores(self):
-        """Cria os 'vetores de votação' para cada partido. 
+        """Cria os 'vetores de votação' para cada partido.
 
-        O 'vetor' usa um número entre -1 (não) e 1 (sim) para representar a "posição média" do partido em cada votação, 
+        O 'vetor' usa um número entre -1 (não) e 1 (sim) para representar a "posição média" do partido em cada votação,
         tendo N dimensões correspondentes às N votações.
         Aproveita para calcular o tamanho dos partidos, presença dos parlamentares, etc.
 
-        Retorna a 'matriz de votações', em que cada linha é um vetor de votações de um partido 
+        Retorna a 'matriz de votações', em que cada linha é um vetor de votações de um partido
                 A ordenação das linhas segue a ordem de self.partidos
         """
 
@@ -172,7 +172,7 @@ class Analise:
             e += numpy.dot( dados_fixos[p.nome] - dados_meus[p.nome],  dados_fixos[p.nome] - dados_meus[p.nome] ) * self.tamanhos_partidos[p.nome]
         return e
 
-    def _polar(self,x, y, deg=0):		# radian if deg=0; degree if deg=1
+    def _polar(self,x, y, deg=0):        # radian if deg=0; degree if deg=1
         """
         Convert from rectangular (x,y) to polar (r,w)
         r = sqrt(x^2 + y^2)
@@ -182,10 +182,10 @@ class Analise:
             return hypot(x, y), 180.0 * atan2(y, x) / pi
         else:
             return hypot(x, y), atan2(y, x)
-    
+
     def _matrot(self,graus):
         """ Retorna matriz de rotação 2x2 que roda os eixos em graus (0 a 360) no sentido anti-horário (como se os pontos girassem no sentido horário em torno de eixos fixos).
-        """ 
+        """
         graus = float(graus)
         rad = numpy.pi * graus/180.
         c = numpy.cos(rad)
@@ -216,7 +216,7 @@ class Analise:
 
         ex = numpy.array([self._energia(dados_fixos,dados_meus,graus=teta1,espelho=0),self._energia(dados_fixos,dados_meus,graus=teta2,espelho=0),self._energia(dados_fixos,dados_meus,graus=teta1,espelho=1), self._energia(dados_fixos,dados_meus,graus=teta2,espelho=1) ])
         print ex
-        
+
         ganhou = ex.argmin()
         campeao = [0,0]
         if ganhou >= 2: # espelhar
@@ -282,7 +282,7 @@ class Analise:
                 dados_meus[partido] = numpy.dot( coords, self._matrot(campeao[1]) )
         return dados_meus
 
-    
+
     #recebe um vetor onde cada elemento é um mapa de coordenadas
     def coaduna_bases(self, lista_dados):
         saida = []
@@ -307,7 +307,7 @@ class Analise:
 
         fig = figure(1)
         fig.clf()
-    
+
         cores_partidos = {'PT'   :'#FF0000',
                       'PSOL' :'#FFFF00',
                       'PV'   :'#00CC00',
@@ -356,12 +356,12 @@ class JsonAnaliseGenerator:
     def get_json(self, casa_legislativa):
         #TODO Mudar para retornar o json descrito nesse comentário abaixo (novo)
         """Retorna JSON tipo [{"nome":"<nomePartido>","tamanhoPartido":<tamanho>,"numero":<numero>,"cor":"<cor>","x":[[<periodo>,<valor>],[<periodo>,<valor>]],"y":[[<periodo>,<valor>],[<periodo>,<valor>]]},...]"""
-    
+
         periodos = self._faz_analises(casa_legislativa)
-    
+
         analise = Analise(casa_legislativa)
         analise._inicializa_tamanhos_partidos()
-    
+
         i = 0
         json = '['
         for pa in periodos:
@@ -369,11 +369,11 @@ class JsonAnaliseGenerator:
             i += 1
         json = json.rstrip(', ')
         json += ']'
-    
+
         return json
-    
+
     def _json_ano(self, posicoes, analise):
-    
+
         json = '{'
         for posicao in posicoes.all():
             nome_partido = posicao.partido.nome
@@ -385,7 +385,7 @@ class JsonAnaliseGenerator:
         json = json.rstrip(', ')
         json += '}, '
         return json
-    
+
     def _json_partido(self, partido):
         json = '{'
         json += '"nome":"%s","cor":"%s","tamanhoPartido":%s,"numero":%s' % (partido.nome, partido.cor, partido.tamanho, partido.numero)
@@ -394,7 +394,7 @@ class JsonAnaliseGenerator:
         #constrói a lista de posições y, cujos itens da lista são listas no formato: [<periodo>,<valor>]
         y = []
         #TODO compor as listas x e y...
-        #for .... 
+        #for ....
 
         json += '"x":%s,"y":%s' % (str(x), str(y))
         json +='}'
@@ -402,7 +402,7 @@ class JsonAnaliseGenerator:
 
     def _faz_analises(self, casa):
         """casa -- objeto do tipo CasaLegislativa"""
-        
+
         if not PeriodoAnalise.objects.filter(casa_legislativa=casa): # Se a análise nunca foi feita, fazer e salvar no bd.
             a20102 = Analise(casa, None, '2011-01-01')
             a20111 = Analise(casa, '2011-01-02', '2011-07-01')
@@ -425,9 +425,9 @@ class JsonAnaliseGenerator:
             a2011b = PeriodoAnalise.objects.filter(periodo='20112', casa_legislativa=casa)[0]
             a2012 = PeriodoAnalise.objects.filter(periodo='20121', casa_legislativa=casa)[0]
             return [a2010, a2011a, a2011b, a2012]
-        
+
     def _to_periodo_analise(self, coordenadas, periodo, casa):
-    
+
         pa = PeriodoAnalise()
         pa.periodo = periodo
         pa.save()

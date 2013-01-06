@@ -18,7 +18,7 @@
 from __future__ import unicode_literals
 from django.db import models
 import re
-import logging 
+import logging
 
 logger = logging.getLogger("radar")
 
@@ -60,7 +60,7 @@ class Partido(models.Model):
     """Partido político.
 
     Atributos:
-        nome -- string; ex: 'PT' 
+        nome -- string; ex: 'PT'
         numero -- string; ex: '13'
 
     Métodos da classe:
@@ -127,7 +127,7 @@ class CasaLegislativa(models.Model):
 
     Atributos:
         nome -- string; ex 'Câmara Municipal de São Paulo'
-        nome_curto -- string; será usado pra gerar links. ex 'cmsp' para 'Câmara Municipal de São Paulo' 
+        nome_curto -- string; será usado pra gerar links. ex 'cmsp' para 'Câmara Municipal de São Paulo'
         esfera -- string (municipal, estadual, federal)
         local -- string; ex 'São Paulo' para a CMSP
         atualizacao -- data em que a base de dados foi atualizada pea última vez com votações desta casa
@@ -142,16 +142,16 @@ class CasaLegislativa(models.Model):
     def __unicode__(self):
         return self.nome
 
-    def num_votacao(self,data_inicial=None,data_final=None): 
-	votacoes = Votacao.objects.filter(proposicao__casa_legislativa=self)
-	from django.utils.dateparse import parse_datetime
-	if data_inicial != None:
-	    ini = parse_datetime('%s 0:0:0' % data_inicial)
-	    votacoes =  votacoes.filter(data__gte=ini)
-	if data_final != None:
-	    fim = parse_datetime('%s 0:0:0' % data_final)
-	    votacoes = votacoes.filter(data__lte=fim)
-	return votacoes.count()
+    def num_votacao(self,data_inicial=None,data_final=None):
+        votacoes = Votacao.objects.filter(proposicao__casa_legislativa=self)
+        from django.utils.dateparse import parse_datetime
+        if data_inicial != None:
+            ini = parse_datetime('%s 0:0:0' % data_inicial)
+            votacoes =  votacoes.filter(data__gte=ini)
+        if data_final != None:
+            fim = parse_datetime('%s 0:0:0' % data_final)
+            votacoes = votacoes.filter(data__lte=fim)
+        return votacoes.count()
 
 class Parlamentar(models.Model):
     """Um parlamentar.
@@ -161,12 +161,12 @@ class Parlamentar(models.Model):
         nome, genero -- strings
     """
 
-    id_parlamentar = models.CharField(max_length=100, blank=True) # obs: não é chave primária! 
+    id_parlamentar = models.CharField(max_length=100, blank=True) # obs: não é chave primária!
     nome = models.CharField(max_length=100)
     genero = models.CharField(max_length=10, choices=GENEROS, blank=True)
 
     def __unicode__(self):
-        return "%s (%s)" % (self.nome, self.partido()) 
+        return "%s (%s)" % (self.nome, self.partido())
 
 
 class Legislatura(models.Model):
@@ -195,7 +195,7 @@ class Legislatura(models.Model):
 
 class Proposicao(models.Model):
     """Proposição parlamentar (proposta de lei).
-    
+
     Atributos:
         id_prop - string identificadora de acordo a fonte de dados
         sigla, numero, ano -- string que juntas formam o nome legal da proposição
@@ -227,12 +227,12 @@ class Proposicao(models.Model):
         return "%s %s/%s" % (self.sigla, self.numero, self.ano)
 
     def __unicode__(self):
-        return "[%s] %s" % (self.nome(), self.ementa) 
+        return "[%s] %s" % (self.nome(), self.ementa)
 
 
 class Votacao(models.Model):
     """Votação em planário.
-    
+
     Atributos:
         id_vot - string identificadora de acordo a fonte de dados
         descricao, resultado -- strings
@@ -240,7 +240,7 @@ class Votacao(models.Model):
         proposicao -- objeto do tipo Proposicao
 
     Métodos:
-        votos() 
+        votos()
         por_partido()
     """
 
@@ -249,7 +249,7 @@ class Votacao(models.Model):
     data = models.DateField(blank=True, null=True)
     resultado = models.TextField(blank=True)
     proposicao = models.ForeignKey(Proposicao, null=True)
-    
+
     def votos(self):
         """Retorna os votos da votação (depende do banco de dados)"""
         return self.voto_set.all()
@@ -273,7 +273,7 @@ class Votacao(models.Model):
 
     def __unicode__(self):
         if self.data:
-            return "[%s] %s" % (self.data, self.descricao) 
+            return "[%s] %s" % (self.data, self.descricao)
         else:
             return self.descricao
 
@@ -291,7 +291,7 @@ class Voto(models.Model):
 
     def __unicode__(self):
         return "%s votou %s" % (self.parlamentar, self.opcao)
-    
+
 class VotosAgregados:
     """Um conjunto de votos.
 
